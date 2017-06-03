@@ -1,0 +1,51 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  pot: 1
+  stage: MyString
+  button_holder: 1
+  active_player: 1
+  p1c1: MyString
+  p1c2: MyString
+  p2c1: MyString
+  p2c2: MyString
+  p3c1: MyString
+  p3c2: MyString
+  p4c1: MyString
+  p4c2: MyString
+  p5c1: MyString
+  p5c2: MyString
+  p6c1: MyString
+  p6c2: MyString
+  flop1: MyString
+  flop2: MyString
+  flop3: MyString
+  river: MyString
+  turn: MyString
+  small_blind: 1
+  big_blind: 1
+
+two:
+  pot: 1
+  stage: MyString
+  button_holder: 1
+  active_player: 1
+  p1c1: MyString
+  p1c2: MyString
+  p2c1: MyString
+  p2c2: MyString
+  p3c1: MyString
+  p3c2: MyString
+  p4c1: MyString
+  p4c2: MyString
+  p5c1: MyString
+  p5c2: MyString
+  p6c1: MyString
+  p6c2: MyString
+  flop1: MyString
+  flop2: MyString
+  flop3: MyString
+  river: MyString
+  turn: MyString
+  small_blind: 1
+  big_blind: 1

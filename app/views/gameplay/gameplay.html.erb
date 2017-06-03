@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title><%= @table.id %> . <%= @user.find(@user_id).username %></title>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <meta http-equiv="refresh" content="180" >
+</head>
+
+<body>
+
+  <!-- notices & alerts messages -->
+  <div class="container">
+    <% if @table.stage == "blinds" %>
+    <div class="alert alert-dismissable alert-success">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <%= @notices %>
+    </div>
+    <% end %>
+
+    <% if notice.present? %>
+    <div class="alert alert-dismissable alert-success">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <%= notice %>
+    </div>
+    <% end %>
+
+    <% if alert.present? %>
+    <div class="alert alert-dismissable alert-danger">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <%= alert %>
+    </div>
+    <% end %>
+
+    <%= yield %>
+  </div>
+
+  <!-- table where cards are displayed -->
+
+  <table class="table table-bordered">
+    <tr>
+      <td><% if @table.stage == "deal_cards" || @table.stage == "blinds" %>
+        FLOP (HIDDEN)
+        <% else %>
+        <img src="<%= @deck.where(:card => @table.flop1).first.image_url %>"
+        style="width:80px;height:100px;">
+        <% end %>
+      </td>
+      <td><% if @table.stage == "deal_cards" || @table.stage == "blinds" %>
+        FLOP (HIDDEN)
+        <% else %>
+        <img src="<%= @deck.where(:card => @table.flop2).first.image_url %>"
+        style="width:80px;height:100px;">
+        <% end %>
+      </td>
+      <td><% if @table.stage == "deal_cards" || @table.stage == "blinds" %>
+        FLOP (HIDDEN)
+        <% else %>
+        <img src="<%= @deck.where(:card => @table.flop3).first.image_url %>"
+        style="width:80px;height:100px;">
+        <% end %>
+      </td>
+      <td><% if @table.stage == "river" || @table.stage == "turn" %>
+        <img src="<%= @deck.where(:card => @table.river).first.image_url %>"
+        style="width:80px;height:100px;">
+        <% else %>
+        RIVER (HIDDEN)
+        <% end %>
+      </td>
+      <td><% if @table.stage == "turn" %>
+        <img src="<%= @deck.where(:card => @table.turn).first.image_url %>"
+        style="width:80px;height:100px;">
+        <% else %>
+        TURN (HIDDEN)
+        <% end %>
+      </td>
+    </tr>
+  </table>
+
+  <!-- list where players and current status are displayed -->
+  <h4><p class="text-center">Pot: <%= @table.pot %></p></h4>
+  <ul class="list-group">
+
+    <% @player.each do |player| %>
+
+
+    <li class="list-group-item
+    <% if player.folded == true%>
+    disabled
+    <% end %>
+    ">
+
+
+    <% if player.player_number != @table.active_player || @this_player != @table.active_player%>
+
+    <!-- standby version -->
+    <span class="badge"><%= player.latest_bet_this_round %></span>
+
+    <% if player.player_number == @table.active_player %>
+    <strong>
+      <% end %>
+
+      <%= player.player_number %> .
+      <%= @user.find_by(:id => player.user_id).username %>
+
+      <% if player.player_number == @table.button_holder %>
+      <i class="fa fa-bandcamp" aria-hidden="true"></i>
+      <% end %>
+
+      <% if player.player_number == @table.active_player %>
+    </strong>
+    <% end %>
+
+    <% else %>
+
+    <!-- active version -->
+    <form action="/record_move">
+
+      <label for="bet_amount"><%= player.player_number %> . <%= @user.find_by(:id => player.user_id).username %></label>
+
+      <% if player.player_number == @table.button_holder %>
+      <i class="fa fa-bandcamp" aria-hidden="true"></i>
+      <% end %>
+
+      <input type="text" name="bet_amount" id="bet_amount" value="<%= @table.min_bet %>">
+
+      <!-- radio buttons -->
+      <p>
+        <input type="radio" name="move" value="bet" checked> Bet . . .
+
+        <% if
+          @player.first(1).last.latest_bet_this_round +
+          @player.first(2).last.latest_bet_this_round +
+          @player.first(3).last.latest_bet_this_round +
+          @player.first(4).last.latest_bet_this_round +
+          @player.first(5).last.latest_bet_this_round +
+          @player.first(6).last.latest_bet_this_round == 0 %>
+
+          <input type="radio" name="move" value="check"> Check . . .
+          <% end %>
+
+          <input type="radio" name="move" value="fold"> Fold . . .
+
+          <!-- hidden inputs -->
+          <input type="hidden" name="user_id" value="<%= player.user_id %>">
+          <input type="hidden" name="table_id" value="<%= player.table_id %>">
+
+          <input type="submit" value="Confirm">
+        </p>
+      </form>
+    </li>
+    <% end %>
+    <% end %>
+  </li>
+
+  <div class="col-md-2">
+    <table class="table table-bordered">
+      <tr>
+        <th>My cards</th>
+        <th>Purses</th>
+        <th>Buy-ins</th>
+      </tr>
+      <tr>
+        <td>
+          <img src="<%= @deck.find_by(:card => @player.find_by(:id => @this_player).c1).image_url %>"
+          style="width:80px;height:100px;">
+          <img src="<%= @deck.find_by(:card => @player.find_by(:id => @this_player).c2).image_url %>"
+          style="width:80px;height:100px;">
+        </td>
+
+        <td>
+          <ol>
+            <% @player.each do |player| %>
+            <li><%= player.purse %></li>
+            <% end %>
+          </ol>
+        </td>
+
+        <td>
+          <ul>
+            <% @player.each do |player| %>
+            <li><%= player.buy_ins %></li>
+            <% end %>
+          </ul>
+        </td>
+
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <form action="/buy_in_less/<%= @user_id %>/<%= @table_id %>">
+            <button class="btn btn-success">
+              Decrease buy-in
+            </button>
+          </form>
+        </td>
+
+        <td>
+          <form action="/buy_in_more/<%= @user_id %>/<%= @table_id %>">
+            <button class="btn btn-danger">
+              Increase buy-in
+            </button>
+          </form>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+</body>
+</html>

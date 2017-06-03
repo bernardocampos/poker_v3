@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <meta http-equiv="refresh" content="60" >
+</head>
+<body>
+
+  <!-- table where cards are displayed -->
+
+  <table class="table table-bordered">
+    <tr>
+      <td><% if @table.stage == "deal_cards" || @table.stage == "blinds" %>
+        FLOP (HIDDEN)
+        <% else %>
+        <img src="<%= @deck.where(:card => @table.flop1).first.image_url %>"
+        style="width:80px;height:100px;">
+        <% end %>
+      </td>
+      <td><% if @table.stage == "deal_cards" || @table.stage == "blinds" %>
+        FLOP (HIDDEN)
+        <% else %>
+        <img src="<%= @deck.where(:card => @table.flop2).first.image_url %>"
+        style="width:80px;height:100px;">
+        <% end %>
+      </td>
+      <td><% if @table.stage == "deal_cards" || @table.stage == "blinds" %>
+        FLOP (HIDDEN)
+        <% else %>
+        <img src="<%= @deck.where(:card => @table.flop3).first.image_url %>"
+        style="width:80px;height:100px;">
+        <% end %>
+      </td>
+      <td><% if @table.stage == "river" || @table.stage == "turn" %>
+        <img src="<%= @deck.where(:card => @table.river).first.image_url %>"
+        style="width:80px;height:100px;">
+        <% else %>
+        RIVER (HIDDEN)
+        <% end %>
+      </td>
+      <td><% if @table.stage == "turn" %>
+        <img src="<%= @deck.where(:card => @table.turn).first.image_url %>"
+        style="width:80px;height:100px;">
+        <% else %>
+        TURN (HIDDEN)
+        <% end %>
+      </td>
+    </tr>
+  </table>
+
+  <!-- list where players and current status are displayed -->
+  <h4><p class="text-center">Pot: <%= @table.pot %></p></h4>
+  <ul class="list-group">
+    <!-- player 1 -->
+    <li class="list-group-item
+    <% if @player.where(:player_number => 1).first.folded == true%>
+    disabled
+    <% end %>">
+
+    <span class="badge"><%= @player.where(:player_number => 1).first.latest_bet_this_round %></span>
+    1. <%= @users.where(:id => @player.where(:player_number => 1).first.user_id).first.username %></li>
+
+    <!-- player 2 -->
+    <li class="list-group-item
+    <% if @player.where(:player_number => 2).first.folded == true%>
+    disabled
+    <% end %>">
+
+    <span class="badge"><%= @player.where(:player_number => 2).first.latest_bet_this_round %></span>
+    2. <%= @users.where(:id => @player.where(:player_number => 2).first.user_id).first.username %></li>
+
+    <!-- player 3 -->
+    <li class="list-group-item
+    <% if @player.where(:player_number => 3).first.folded == true%>
+    disabled
+    <% end %>">
+
+    <span class="badge"><%= @player.where(:player_number => 3).first.latest_bet_this_round %></span>
+    3. <%= @users.where(:id => @player.where(:player_number => 3).first.user_id).first.username %></li>
+
+    <!-- player 4 -->
+    <li class="list-group-item">
+      <table>
+        <tr>
+          <td>
+            <form class="form-inline">
+              <div class="form-group">
+                <label for="bet_amount">4. <%= @users.where(:id => @player.where(:player_number => 4).first.user_id).first.username %></label>
+                <input type="text" name="bet_amount" class="form-control" id="bet_amount" value=500>
+              </div>
+            </form>
+          </td>
+        </tr>
+        <tr></tr>
+        <tr>
+          <td height="10">
+            <div class="radio-inline">
+              <label for="optionsRadio3">
+                <input type="radio" name="move" id="optionsRadios1" value="bet" checked>
+                Bet
+              </label>
+            </div>
+            <div class="radio-inline
+            <% if
+              @player.first(1).last.latest_bet_this_round +
+              @player.first(2).last.latest_bet_this_round +
+              @player.first(3).last.latest_bet_this_round +
+              @player.first(4).last.latest_bet_this_round +
+              @player.first(5).last.latest_bet_this_round +
+              @player.first(6).last.latest_bet_this_round > 0%>
+              disabled
+              <% end %>
+
+
+              <!-- how to do the above more naturally??????? kinda like a sumif............................ -->
+
+
+
+
+              ">
+              <label for="optionsRadio2">
+                <input type="radio" name="move" id="optionsRadios2" value="check" <% if
+                @player.first(1).last.latest_bet_this_round +
+                @player.first(2).last.latest_bet_this_round +
+                @player.first(3).last.latest_bet_this_round +
+                @player.first(4).last.latest_bet_this_round +
+                @player.first(5).last.latest_bet_this_round +
+                @player.first(6).last.latest_bet_this_round > 0%>
+                disabled
+                <% end %>>
+                Check
+              </label>
+            </div>
+            <div class="radio-inline">
+              <label for="optionsRadio3">
+                <input type="radio" name="move" id="optionsRadios3" value="fold">
+                Fold
+              </label>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td height="70">
+            <form action="/record_move">
+              <button type="button" class="btn btn-danger">Confirm</button>
+            </form>
+          </td>
+        </tr>
+      </table>
+    </li>
+
+    <!-- player 5 -->
+    <li class="list-group-item
+    <% if @player.where(:player_number => 5).first.folded == true%>
+    disabled
+    <% end %>">
+    <span class="badge"><%= @player.where(:player_number => 5).first.latest_bet_this_round %></span>
+    5. <%= @users.where(:id => @player.where(:player_number => 5).first.user_id).first.username %></li>
+
+    <!-- player 6 -->
+    <li class="list-group-item
+    <% if @player.where(:player_number => 6).first.folded == true%>
+    disabled
+    <% end %>">
+
+    <span class="badge"><%= @player.where(:player_number => 6).first.latest_bet_this_round %></span>
+    6. <%= @users.where(:id => @player.where(:player_number => 6).first.user_id).first.username %></li>
+  </ul>
+
+  <div class="col-md-2">
+    <table>
+      <tr> <th>My cards</th>
+      </tr>
+      <tr>
+        <td>
+          <img src="<%= @deck.where(:card => @table.p4c1).first.image_url %>"
+          style="width:80px;height:100px;">
+        </td>
+        <td>
+          <img src="<%= @deck.where(:card => @table.p4c2).first.image_url %>"
+          style="width:80px;height:100px;">
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>
+</html>
