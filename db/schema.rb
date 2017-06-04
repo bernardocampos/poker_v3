@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170530164215) do
+ActiveRecord::Schema.define(version: 20170604051230) do
 
   create_table "decks", force: :cascade do |t|
     t.string   "card"
@@ -64,6 +64,8 @@ ActiveRecord::Schema.define(version: 20170530164215) do
     t.string   "winnings"
     t.string   "winning_hands"
     t.integer  "buy_in"
+    t.string   "name"
+    t.string   "password"
   end
 
   create_table "users", force: :cascade do |t|
