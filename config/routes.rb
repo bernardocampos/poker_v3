@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   get("/:user_id/:table_id", {:controller => "gameplay", :action => "game"})
@@ -11,4 +12,9 @@ Rails.application.routes.draw do
   #management controller actions
   get("/stats/:table_id", {:controller => "management", :action => "stats"})
   get("/deck/:table_id", {:controller => "management", :action => "deck"})
+
+  #dashboard controller actions
+  get("/new_table", {:controller => "dashboard", :action => "new_table"})
+
+  root to: "dashboard#home"
 end

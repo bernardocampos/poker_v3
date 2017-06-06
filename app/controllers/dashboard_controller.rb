@@ -1,4 +1,15 @@
 class DashboardController < ApplicationController
+  def home
+    @table = current_user.tables
+    @player = Player.all
+    @user = User.all
+
+  end
+
+  def new_table
+    @table = Table.new
+  end
+
   def create_table
     tt = Table.new
     tt.name = params[:name]

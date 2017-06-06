@@ -5,6 +5,8 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+gem 'devise'
+
 gem 'pg', :group => :production
 gem 'rails_12factor', :group => :production
 
