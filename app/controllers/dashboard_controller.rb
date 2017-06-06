@@ -8,6 +8,7 @@ class DashboardController < ApplicationController
 
   def new_table
     @table = Table.new
+    @player = Player.new
   end
 
   def create_table
@@ -15,19 +16,21 @@ class DashboardController < ApplicationController
     tt.name = params[:name]
     tt.password = params[:password]
     tt.stage = "standby"
-    tt.small_blind = params[:big_blind]/2
+    tt.small_blind = params[:big_blind].to_i/2
     tt.big_blind = params[:big_blind]
     tt.buy_in = params[:buy_in]
     tt.save
     tp = Player.new
     tp.table_id = tt.id
     tp.user_id = params[:user_id]
-    tp.player_number = 1
+    tp.player_number = 1            #adjust this
     tp.folded = true
     tp.buy_ins = 0
     tp.purse = 0
     tp.latest_bet_this_round = 0
     tp.save
+    redirect_to("/")
+    # redirect_to("/#{tt.id}/#{tp.id}/")
   end
 
   def join_table
@@ -55,7 +58,9 @@ class DashboardController < ApplicationController
   end
 
   def leave_table
-    #code
+    player = Player.find_by(:user_id => current_user.id, :table_id => params[:table_id])
+    player.destroy
+    redirect_to("/")
   end
 
 

@@ -2,6 +2,15 @@ Rails.application.routes.draw do
   devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
+  #dashboard controller actions
+  get("/new_table", {:controller => "dashboard", :action => "new_table"})
+  post("/create_table", {:controller => "dashboard", :action => "create_table"})
+  get("/leave_table/:table_id", {:controller => "dashboard", :action => "leave_table"})
+
+  root to: "dashboard#home"
+
+  #dashboard gameplay actions
+
   get("/:user_id/:table_id", {:controller => "gameplay", :action => "game"})
   get("/record_move/", {:controller => "gameplay", :action => "record_move"})
   get("/clear_table/:user_id/:table_id", {:controller => "gameplay", :action => "clear_table"})
@@ -13,8 +22,5 @@ Rails.application.routes.draw do
   get("/stats/:table_id", {:controller => "management", :action => "stats"})
   get("/deck/:table_id", {:controller => "management", :action => "deck"})
 
-  #dashboard controller actions
-  get("/new_table", {:controller => "dashboard", :action => "new_table"})
 
-  root to: "dashboard#home"
 end

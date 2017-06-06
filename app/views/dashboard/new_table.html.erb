@@ -44,6 +44,21 @@
 
         <input type="text" id="big_blind" name="big_blind" placeholder="Big blind" class="form-control">
       </div>
+
+      <!-- Label and input for buy in -->
+      <div class="form-group">
+        <label for="buy_in" class="control-label">
+          Buy in
+        </label>
+
+        <input type="text" id="buy_in" name="buy_in" placeholder="Buy in" class="form-control">
+      </div>
+
+
+
+
+      <input type="hidden" name="user_id" value="<%= current_user.id %>">
+
       <button class="btn btn-success">
         Create Table
       </button>
