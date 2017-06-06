@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <title>Slow Poker: <%= @table.name %></title>
-  
+
 </head>
 
 <body>
@@ -87,7 +87,7 @@
     disabled
     <% end %>
     ">
-
+    
 
     <% if player.player_number != @table.active_player || @this_player != @table.active_player%>
 
@@ -112,7 +112,7 @@
     <% else %>
 
     <!-- active version -->
-    <form action="/record_move">
+    <form action="/record_move" method="post">
 
       <label for="bet_amount"><%= player.player_number %> . <%= @user.find_by(:id => player.user_id).username %></label>
 

@@ -186,7 +186,7 @@ class GameplayController < ApplicationController
     @deck = Deck.all
     @player = Player.where(:table_id => @table_id)
     @user = User.all
-    @this_player = Player.find_by(:user_id => @user_id, :table_id => @table_id).player_number
+    @this_player = Player.find_by(:user_id => 6, :table_id => @table_id).player_number
   end
 
   def next_player
@@ -312,7 +312,7 @@ class GameplayController < ApplicationController
     max_bet = [@table.min_bet,@table.pot].max
 
     if params[:move] == "bet" && (params[:bet_amount].to_i > max_bet || params[:bet_amount].to_i < @table.min_bet)
-      redirect_to("/#{@user_id}/#{@table_id}", :alert => "Bet must be between #{@table.min_bet} and #{max_bet}. You can also fold or check (if available)")
+      redirect_to("/#{@table_id}", :alert => "Bet must be between #{@table.min_bet} and #{max_bet}. You can also fold or check (if available)")
     else
 
       temp_player = Player.find_by(:table_id => @table_id, :user_id => @user_id)
@@ -340,7 +340,7 @@ class GameplayController < ApplicationController
       temp_player.save
       temp_table.save
 
-      redirect_to("/#{@user_id}/#{@table_id}")
+      redirect_to("/#{@table_id}")
 
     end
   end
@@ -374,7 +374,7 @@ class GameplayController < ApplicationController
       notices.push("Player#{@table.winners[a]} didn't pussy out and won #{@table.winnings[a]} for their courage")
     else
       until a > @table.winners.length-1 do
-        notices.push("Player#{@table.winners[a]} wins #{@table.winnings[a]} with #{@table.winning_hands[a].rank}")
+        notices.push("Last round's winners: Player#{@table.winners[a]} wins #{@table.winnings[a]} with #{@table.winning_hands[a].rank}")
         a=a+1
       end
     end

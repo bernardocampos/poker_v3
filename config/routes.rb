@@ -5,14 +5,16 @@ Rails.application.routes.draw do
   #dashboard controller actions
   get("/new_table", {:controller => "dashboard", :action => "new_table"})
   post("/create_table", {:controller => "dashboard", :action => "create_table"})
+  get("/join_form", {:controller => "dashboard", :action => "join_form"})
+  post("/join_table", {:controller => "dashboard", :action => "join_table"})
   get("/leave_table/:table_id", {:controller => "dashboard", :action => "leave_table"})
 
   root to: "dashboard#home"
 
   #dashboard gameplay actions
 
-  get("/:user_id/:table_id", {:controller => "gameplay", :action => "game"})
-  get("/record_move/", {:controller => "gameplay", :action => "record_move"})
+  get("/:table_id", {:controller => "gameplay", :action => "game"})
+  post("/record_move/", {:controller => "gameplay", :action => "record_move"})
   get("/clear_table/:user_id/:table_id", {:controller => "gameplay", :action => "clear_table"})
   get("/to_turn/:user_id/:table_id", {:controller => "gameplay", :action => "to_turn"})
   get("/buy_in_more/:user_id/:table_id", {:controller => "gameplay", :action => "buy_in_more"})
