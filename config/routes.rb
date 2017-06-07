@@ -15,10 +15,10 @@ Rails.application.routes.draw do
 
   get("/:table_id", {:controller => "gameplay", :action => "game"})
   post("/record_move/", {:controller => "gameplay", :action => "record_move"})
-  get("/clear_table/:user_id/:table_id", {:controller => "gameplay", :action => "clear_table"})
+  get("/clear_table/:table_id", {:controller => "gameplay", :action => "clear_table"})
   get("/to_turn/:user_id/:table_id", {:controller => "gameplay", :action => "to_turn"})
-  get("/buy_in_more/:user_id/:table_id", {:controller => "gameplay", :action => "buy_in_more"})
-  get("/buy_in_less/:user_id/:table_id", {:controller => "gameplay", :action => "buy_in_less"})
+  post("/buy_in_more/:table_id", {:controller => "gameplay", :action => "buy_in_more"})
+  post("/buy_in_less/:table_id", {:controller => "gameplay", :action => "buy_in_less"})
 
   #management controller actions
   get("/stats/:table_id", {:controller => "management", :action => "stats"})

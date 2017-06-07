@@ -16,7 +16,7 @@
     </div>
     <% end %>
 
-    <% if notice.present? %>
+    <!-- <% if notice.present? %>
     <div class="alert alert-dismissable alert-success">
       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
       <%= notice %>
@@ -28,11 +28,12 @@
       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
       <%= alert %>
     </div>
-    <% end %>
+    <% end %> -->
 
-    <%= yield %>
+
   </div>
 
+  <h4><p class="text-center"><%= @table.name %></p></h4>
   <!-- table where cards are displayed -->
 
   <table class="table table-bordered">
@@ -87,7 +88,7 @@
     disabled
     <% end %>
     ">
-    
+
 
     <% if player.player_number != @table.active_player || @this_player != @table.active_player%>
 
@@ -99,7 +100,7 @@
       <% end %>
 
       <%= player.player_number %> .
-      <%= @user.find_by(:id => player.user_id).username %>
+      <%= player.user.username %>
 
       <% if player.player_number == @table.button_holder %>
       <i class="fa fa-bandcamp" aria-hidden="true"></i>
@@ -114,7 +115,7 @@
     <!-- active version -->
     <form action="/record_move" method="post">
 
-      <label for="bet_amount"><%= player.player_number %> . <%= @user.find_by(:id => player.user_id).username %></label>
+      <label for="bet_amount"><%= player.player_number %> . <%= player.user.username %></label>
 
       <% if player.player_number == @table.button_holder %>
       <i class="fa fa-bandcamp" aria-hidden="true"></i>
@@ -151,21 +152,26 @@
     <% end %>
   </li>
 
+  <!-- player stats -->
+
   <div class="col-md-2">
     <table class="table table-bordered">
       <tr>
+        <% if @this_player != "visitor" %>
         <th>My cards</th>
+        <% end %>
         <th>Purses</th>
         <th>Buy-ins</th>
       </tr>
       <tr>
+        <% if @this_player != "visitor" %>
         <td>
-          <img src="<%= @deck.find_by(:card => @player.find_by(:id => @this_player).c1).image_url %>"
+          <img src="<%= @deck.find_by(:card => @player.find_by(:player_number => @this_player).c1).image_url %>"
           style="width:80px;height:100px;">
-          <img src="<%= @deck.find_by(:card => @player.find_by(:id => @this_player).c2).image_url %>"
+          <img src="<%= @deck.find_by(:card => @player.find_by(:player_number => @this_player).c2).image_url %>"
           style="width:80px;height:100px;">
         </td>
-
+        <% end %>
         <td>
           <ol>
             <% @player.each do |player| %>
@@ -183,10 +189,12 @@
         </td>
 
       </tr>
+      <% if @this_player != "visitor" %>
+
       <tr>
         <td></td>
         <td>
-          <form action="/buy_in_less/<%= @user_id %>/<%= @table_id %>">
+          <form action="/buy_in_less/<%= @table_id %>" method="post">
             <button class="btn btn-success">
               Decrease buy-in
             </button>
@@ -194,13 +202,14 @@
         </td>
 
         <td>
-          <form action="/buy_in_more/<%= @user_id %>/<%= @table_id %>">
+          <form action="/buy_in_more/<%= @table_id %>" method ="post">
             <button class="btn btn-danger">
               Increase buy-in
             </button>
           </form>
         </td>
       </tr>
+      <% end %>
     </table>
   </div>
 

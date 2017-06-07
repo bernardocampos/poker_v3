@@ -11,7 +11,7 @@ class GameplayController < ApplicationController
       pay_winner
       finalize_round
       winner_notices
-      redirect_to("/#{@user_id}/#{@table_id}", :notice => "#{@notices}")
+      redirect_to("/#{@table_id}", :notice => "#{@notices}")
     elsif @table.stage == "blinds"
       winner_notices
       @notices
@@ -20,7 +20,7 @@ class GameplayController < ApplicationController
       pay_winner
       finalize_round
       winner_notices
-      redirect_to("/#{@user_id}/#{@table_id}", :notice => "#{@notices}")
+      redirect_to("/#{@table_id}", :notice => "#{@notices}")
       # redirect_to("/#{@user_id}/#{@table_id}", :notice => "#{players_not_folded} wins #{@table.pot}")
     else
       render("gameplay.html.erb")
@@ -33,7 +33,7 @@ class GameplayController < ApplicationController
     tp.buy_ins = tp.buy_ins+1
     tp.purse = tp.purse + @table.buy_in
     tp.save
-    redirect_to("/#{@user_id}/#{@table_id}", :notice => "I hope you know what you're doing")
+    redirect_to("/#{@table_id}", :alert => "I hope you know what you're doing")
   end
 
   def buy_in_less
@@ -44,10 +44,10 @@ class GameplayController < ApplicationController
       tp.purse = tp.purse - @table.buy_in
       tp.save
       @notice = "Smart move. Quit while you're ahead..."
-    else @notice = "Nice try, but you're too poor for that"
+    else @alert = "Nice try, but you're too poor for that"
     end
 
-    redirect_to("/#{@user_id}/#{@table_id}", :notice => "#{@notice}")
+    redirect_to("/#{@table_id}", :notice => "#{@notice}")
   end
 
   def clear_table
@@ -56,7 +56,7 @@ class GameplayController < ApplicationController
     @table.pot = 0
     @table.stage = "deal_cards"
     @table.min_bet = @table.small_blind
-    @table.button_holder = 3
+    @table.button_holder = @table.players.count
     @table.active_player = 1 ##########
     @table.save
 
@@ -69,7 +69,7 @@ class GameplayController < ApplicationController
       tp.buy_ins = 1
       tp.save
     end
-    redirect_to("/#{@user_id}/#{@table_id}")
+    redirect_to("/#{@table_id}")
     # render("gameplay.html.erb")
   end
 
@@ -86,11 +86,12 @@ class GameplayController < ApplicationController
   def deal_cards
     load_variables
     # place two cards in each players' hands + flop, river and turn
-    deck_shuffle = (1..52).to_a.sample(17)
+    z = @table.players.count.to_i * 2
+    deck_shuffle = (1..52).to_a.sample(z+5)
 
-    a = 0
+    a = 5
     b = 1
-    until a == 12 do  #i thought this should've been until a==11, but it only worked with 12
+    until a == z+5 do  #i thought this should've been until a==11, but it only worked with 12
       temp_player = Player.find_by(:table_id => @table_id, :player_number => b)
 
       temp_player.c1 = Deck.find(deck_shuffle[a]).card
@@ -103,23 +104,25 @@ class GameplayController < ApplicationController
     end
 
     this_table = @table
-    this_table.p1c1 = Deck.find(deck_shuffle[0]).card
-    this_table.p1c2 = Deck.find(deck_shuffle[1]).card
-    this_table.p2c1 = Deck.find(deck_shuffle[2]).card
-    this_table.p2c2 = Deck.find(deck_shuffle[3]).card
-    this_table.p3c1 = Deck.find(deck_shuffle[4]).card
-    this_table.p3c2 = Deck.find(deck_shuffle[5]).card
-    this_table.p4c1 = Deck.find(deck_shuffle[6]).card
-    this_table.p4c2 = Deck.find(deck_shuffle[7]).card
-    this_table.p5c1 = Deck.find(deck_shuffle[8]).card
-    this_table.p5c2 = Deck.find(deck_shuffle[9]).card
-    this_table.p6c1 = Deck.find(deck_shuffle[10]).card
-    this_table.p6c2 = Deck.find(deck_shuffle[11]).card
-    this_table.flop1 = Deck.find(deck_shuffle[12]).card
-    this_table.flop2 = Deck.find(deck_shuffle[13]).card
-    this_table.flop3 = Deck.find(deck_shuffle[14]).card
-    this_table.river = Deck.find(deck_shuffle[15]).card
-    this_table.turn = Deck.find(deck_shuffle[16]).card
+    this_table.flop1 = Deck.find(deck_shuffle[0]).card
+    this_table.flop2 = Deck.find(deck_shuffle[1]).card
+    this_table.flop3 = Deck.find(deck_shuffle[2]).card
+    this_table.river = Deck.find(deck_shuffle[3]).card
+    this_table.turn = Deck.find(deck_shuffle[4]).card
+
+    # this_table.p1c1 = Deck.find(deck_shuffle[5]).card
+    # this_table.p1c2 = Deck.find(deck_shuffle[6]).card
+    # this_table.p2c1 = Deck.find(deck_shuffle[7]).card
+    # this_table.p2c2 = Deck.find(deck_shuffle[8]).card
+    # this_table.p3c1 = Deck.find(deck_shuffle[9]).card
+    # this_table.p3c2 = Deck.find(deck_shuffle[10]).card
+    # this_table.p4c1 = Deck.find(deck_shuffle[11]).card
+    # this_table.p4c2 = Deck.find(deck_shuffle[12]).card
+    # this_table.p5c1 = Deck.find(deck_shuffle[13]).card
+    # this_table.p5c2 = Deck.find(deck_shuffle[14]).card
+    # this_table.p6c1 = Deck.find(deck_shuffle[15]).card
+    # this_table.p6c2 = Deck.find(deck_shuffle[16]).card
+
     this_table.save
   end
 
@@ -181,12 +184,17 @@ class GameplayController < ApplicationController
 
   def load_variables
     @table_id = params[:table_id]
-    @user_id = params[:user_id]
+    @user_id = current_user.id
     @table = Table.find_by(:id => @table_id)
     @deck = Deck.all
     @player = Player.where(:table_id => @table_id)
     @user = User.all
-    @this_player = Player.find_by(:user_id => 6, :table_id => @table_id).player_number
+    @this_player =
+    if @table.players.find_by(:user_id => current_user.id) != nil
+      @table.players.find_by(:user_id => current_user.id).player_number
+    else "visitor"
+    end
+
   end
 
   def next_player
@@ -350,7 +358,7 @@ class GameplayController < ApplicationController
     @table = Table.find(params[:table_id])
     @table.pot = 0
     @table.stage = "turn"
-    @table.button_holder = 3
+    @table.button_holder = @table.players.count
     @table.active_player = 1 ##########
     @table.save
 
@@ -363,7 +371,7 @@ class GameplayController < ApplicationController
       tp.buy_ins = 1
       tp.save
     end
-    redirect_to("/#{@user_id}/#{@table_id}")
+    redirect_to("/#{@table_id}")
 
   end
   def winner_notices
@@ -371,7 +379,7 @@ class GameplayController < ApplicationController
     notices=[]
     a = 0
     if @table.winning_hands.length == 0
-      notices.push("Player#{@table.winners[a]} didn't pussy out and won #{@table.winnings[a]} for their courage")
+      notices.push("#{@player.find_by(:player_number => @table.winners[a]).user.username} didn't pussy out and won #{@table.winnings[a]} for their courage")
     else
       until a > @table.winners.length-1 do
         notices.push("Last round's winners: Player#{@table.winners[a]} wins #{@table.winnings[a]} with #{@table.winning_hands[a].rank}")

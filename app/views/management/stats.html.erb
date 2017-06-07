@@ -13,45 +13,33 @@
       <th>Pot</th>
       <td><%= @table.pot %></td>
       <th>Player</th>
-      <td>1</td>
-      <td>2</td>
-      <td>3</td>
-      <td>4</td>
-      <td>5</td>
-      <td>6</td>
+      <% @player.each do |player| %>
+      <td><%= player.player_number %></td>
+      <% end %>
     </tr>
     <tr>
       <th>Stage</th>
       <td><%= @table.stage %></td>
       <th>Folded</th>
-      <td><%= @player.where(:player_number => 1).first.folded %></td>
-      <td><%= @player.where(:player_number => 2).first.folded %></td>
-      <td><%= @player.where(:player_number => 3).first.folded %></td>
-      <td><%= @player.where(:player_number => 4).first.folded %></td>
-      <td><%= @player.where(:player_number => 5).first.folded %></td>
-      <td><%= @player.where(:player_number => 6).first.folded %></td>
+      <% @player.each do |player| %>
+      <td><%= player.folded %></td>
+      <% end %>
     </tr>
     <tr>
       <th>Active Player</th>
       <td><%= @table.active_player %></td>
       <th>Purse</th>
-      <td><%= @player.where(:player_number => 1).first.purse %></td>
-      <td><%= @player.where(:player_number => 2).first.purse %></td>
-      <td><%= @player.where(:player_number => 3).first.purse %></td>
-      <td><%= @player.where(:player_number => 4).first.purse %></td>
-      <td><%= @player.where(:player_number => 5).first.purse %></td>
-      <td><%= @player.where(:player_number => 6).first.purse %></td>
+      <% @player.each do |player| %>
+      <td><%= player.purse %></td>
+      <% end %>
     </tr>
     <tr>
       <th>Min Bet</th>
       <td><%= @table.min_bet %></td>
       <th>Latest Bet This Round</th>
-      <td><%= @player.where(:player_number => 1).first.latest_bet_this_round %></td>
-      <td><%= @player.where(:player_number => 2).first.latest_bet_this_round %></td>
-      <td><%= @player.where(:player_number => 3).first.latest_bet_this_round %></td>
-      <td><%= @player.where(:player_number => 4).first.latest_bet_this_round %></td>
-      <td><%= @player.where(:player_number => 5).first.latest_bet_this_round %></td>
-      <td><%= @player.where(:player_number => 6).first.latest_bet_this_round %></td>
+      <% @player.each do |player| %>
+      <td><%= player.latest_bet_this_round %></td>
+      <% end %>
     </tr>
     <tr>
       <th>Small Blind</th>
@@ -101,18 +89,10 @@
     </tr>
     <tr>
       <th>from "Player"</th>
-      <td><%= @player.find_by(:player_number => 1).c1 %></td>
-      <td><%= @player.find_by(:player_number => 1).c2 %></td>
-      <td><%= @player.find_by(:player_number => 2).c1 %></td>
-      <td><%= @player.find_by(:player_number => 2).c2 %></td>
-      <td><%= @player.find_by(:player_number => 3).c1 %></td>
-      <td><%= @player.find_by(:player_number => 3).c2 %></td>
-      <td><%= @player.find_by(:player_number => 4).c1 %></td>
-      <td><%= @player.find_by(:player_number => 4).c2 %></td>
-      <td><%= @player.find_by(:player_number => 5).c1 %></td>
-      <td><%= @player.find_by(:player_number => 5).c2 %></td>
-      <td><%= @player.find_by(:player_number => 6).c1 %></td>
-      <td><%= @player.find_by(:player_number => 6).c2 %></td>
+      <% @player.each do |player| %>
+      <td><%= player.c1 %></td>
+      <td><%= player.c2 %></td>
+      <% end %>
     </tr>
     <tr>
       <th>from "Table"</th>
