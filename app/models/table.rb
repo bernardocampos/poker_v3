@@ -8,7 +8,7 @@ class Table < ApplicationRecord
   validates :small_blind, :numericality => { :greater_than => 0 }
   validates :small_blind, :presence => true
   validates :pot, :numericality => { :greater_than_or_equal_to => 0 }
-  validates :password, :length => { :minimum => 6, :maximum => 10 }
+  validates :password, :length => { :minimum => 6, :maximum => 14 }
   validates :password, :presence => true
   validates :name, :presence => true
   validates :buy_in, :numericality => { :greater_than => 0 }
