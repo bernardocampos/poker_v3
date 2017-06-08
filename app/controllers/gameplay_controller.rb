@@ -50,29 +50,6 @@ class GameplayController < ApplicationController
     redirect_to("/#{@table_id}", :notice => "#{@notice}")
   end
 
-  def clear_table
-
-    @table = Table.find(params[:table_id])
-    @table.pot = 0
-    @table.stage = "deal_cards"
-    @table.min_bet = @table.small_blind
-    @table.button_holder = @table.players.count
-    @table.active_player = 1 ##########
-    @table.save
-
-    @player = Player.where(:table_id => params[:table_id])
-    @player.each do |player|
-      tp = player
-      tp.purse = 2000
-      tp.folded = false
-      tp.latest_bet_this_round = 0
-      tp.buy_ins = 1
-      tp.save
-    end
-    redirect_to("/#{@table_id}")
-    # render("gameplay.html.erb")
-  end
-
   def clear_bets
     #clear latest_bet_this_round for all players
     load_variables

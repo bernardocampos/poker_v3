@@ -1,0 +1,32 @@
+<!-- Validation failure messages -->
+<% if @table.errors.any? %>
+<% @table.errors.full_messages.each do |message| %>
+<div class="alert alert-dismissable alert-danger">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+  <%= message %>
+</div>
+<% end %>
+<% end %>
+
+<div class="page-header">
+  <h3>Are you sure?</h3>
+  <h5>Unless this is a new table, resetting it could anger your friends...</h5>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <form action="/reset_table" method="post">
+      <!-- Hidden input for authenticity token to protect from forgery -->
+      <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+
+      <input type="hidden" name="table_id" value="<%= @table.id %>">
+      <input type="hidden" name="player_number" value="<%= current_user.id %>">
+
+      <button class="btn btn-danger">
+        Reset Table
+      </button>
+      or
+      <a href="/" class="btn btn-default">Cancel</a>
+    </form>
+  </div>
+</div>

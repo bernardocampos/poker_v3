@@ -71,7 +71,7 @@ class DashboardController < ApplicationController
         render("dashboard/join_table.html.erb")
       end
 
-    else render("dashboard/join_table.html.erb", :notice => "Incorrect table/password combination")
+    else redirect_to("/", :alert => "Inexistent table or incorrect table/password combination")
     end
 
   end
@@ -88,12 +88,51 @@ class DashboardController < ApplicationController
     #code
   end
 
+  def leave_confirmation
+    if Player.find_by(:table_id => params[:table_id], :user_id => current_user.id) != nil
+      @table = Table.find(params[:table_id])
+    else
+      redirect_to("/", :alert => "You're not a player in that table")
+    end
+  end
+
   def leave_table
     player = Player.find_by(:user_id => current_user.id, :table_id => params[:table_id])
     player.destroy
     redirect_to("/")
   end
 
+  def reset_confirmation
+    if Player.find_by(:table_id => params[:table_id], :user_id => current_user.id, :player_number => 1) != nil
+      @table = Table.find(params[:table_id])
+    else
+      redirect_to("/", :alert => "Only the user who created the table is allowed to do that")
+    end
 
+  end
+  def reset_table
+    if Player.find_by(:table_id => params[:table_id], :user_id => current_user.id, :player_number => 1) != nil
+      @table = Table.find(params[:table_id])
+      @table.pot = 0
+      @table.stage = "deal_cards"
+      @table.min_bet = @table.small_blind
+      @table.button_holder = @table.players.count
+      @table.active_player = 1 ##########
+      @table.save
+
+      @player = Player.where(:table_id => params[:table_id])
+      @player.each do |player|
+        tp = player
+        tp.purse = @table.buy_in
+        tp.folded = false
+        tp.latest_bet_this_round = 0
+        tp.buy_ins = 1
+        tp.save
+      end
+      redirect_to("/#{@table_id}", :notice => "Table reset successfully. You may now go to the table and start the game.")
+      # render("gameplay.html.erb")
+    else redirect_to("/", :alert => "Only the user who created the table is allowed to do that")
+    end
+  end
 
 end

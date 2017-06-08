@@ -59,13 +59,17 @@
 
       <input type="hidden" name="user_id" value="<%= current_user.id %>">
       <div>
-        Notice: Only users with the correct password may play at your table, but any user may view your table as a bystander.
+        Notice:
+        <ul>
+          <li>Only users with the correct password may play at your table, but any user may view your table as a bystander.</li>
+          <li>Once all players have joined the table, click "reset table" to start the game.</li>
+        </ul>
       </div>
       <button class="btn btn-success">
         Create Table
       </button>
       or
-      <a href="/">Cancel</a>
+      <a href="/" class="btn btn-default">Cancel</a>
     </form>
   </div>
 </div>
