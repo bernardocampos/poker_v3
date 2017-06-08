@@ -356,8 +356,8 @@ class GameplayController < ApplicationController
     notices=[]
     a = 0
     if @table.winning_hands.length == 0
-      notices.push("#{@player.find_by(:player_number => @table.winners[a]).user.username} didn't give up and won #{@table.winnings[a]} for their courage")
-      # "Nothing to see here"
+      # notices.push("#{@player.find_by(:player_number => @table.winners[a]).user.username} didn't give up and won #{@table.winnings[a]} for their courage")
+      notices.push("One of two things happened: everyone but one player folded, or you just started this table.")
     else
       until a > @table.winners.length-1 do
         notices.push("Last round's winners: #{@player.find_by(:player_number => @table.winners[a]).user.username} wins #{@table.winnings[a]} with #{@table.winning_hands[a].rank}")
