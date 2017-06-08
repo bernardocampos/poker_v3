@@ -18,66 +18,67 @@
 
     <!-- <% if notice.present? %>
     <div class="alert alert-dismissable alert-success">
-      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-      <%= notice %>
-    </div>
-    <% end %>
-
-    <% if alert.present? %>
-    <div class="alert alert-dismissable alert-danger">
-      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-      <%= alert %>
-    </div>
-    <% end %> -->
-
-
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <%= notice %>
   </div>
+  <% end %>
 
-  <h4><p class="text-center"><%= @table.name %></p></h4>
-  <!-- table where cards are displayed -->
+  <% if alert.present? %>
+  <div class="alert alert-dismissable alert-danger">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+  <%= alert %>
+</div>
+<% end %> -->
 
-  <table class="table table-bordered">
-    <tr>
-      <td><% if @table.stage == "deal_cards" || @table.stage == "blinds" %>
-        FLOP (HIDDEN)
-        <% else %>
-        <img src="<%= @deck.where(:card => @table.flop1).first.image_url %>"
-        style="width:80px;height:100px;">
-        <% end %>
-      </td>
-      <td><% if @table.stage == "deal_cards" || @table.stage == "blinds" %>
-        FLOP (HIDDEN)
-        <% else %>
-        <img src="<%= @deck.where(:card => @table.flop2).first.image_url %>"
-        style="width:80px;height:100px;">
-        <% end %>
-      </td>
-      <td><% if @table.stage == "deal_cards" || @table.stage == "blinds" %>
-        FLOP (HIDDEN)
-        <% else %>
-        <img src="<%= @deck.where(:card => @table.flop3).first.image_url %>"
-        style="width:80px;height:100px;">
-        <% end %>
-      </td>
-      <td><% if @table.stage == "river" || @table.stage == "turn" %>
-        <img src="<%= @deck.where(:card => @table.river).first.image_url %>"
-        style="width:80px;height:100px;">
-        <% else %>
-        RIVER (HIDDEN)
-        <% end %>
-      </td>
-      <td><% if @table.stage == "turn" %>
-        <img src="<%= @deck.where(:card => @table.turn).first.image_url %>"
-        style="width:80px;height:100px;">
-        <% else %>
-        TURN (HIDDEN)
-        <% end %>
-      </td>
-    </tr>
-  </table>
 
-  <!-- list where players and current status are displayed -->
-  <h4><p class="text-center">Pot: <%= @table.pot %></p></h4>
+</div>
+
+<h4><p class="text-center"><%= @table.name %></p></h4>
+<!-- table where cards are displayed -->
+
+<table class="table table-bordered">
+  <tr>
+    <td><% if @table.stage == "deal_cards" || @table.stage == "blinds" || @table.stage == "standby"  %>
+      FLOP (HIDDEN)
+      <% else %>
+      <img src="<%= @deck.where(:card => @table.flop1).first.image_url %>"
+      style="width:80px;height:100px;">
+      <% end %>
+    </td>
+    <td><% if @table.stage == "deal_cards" || @table.stage == "blinds" || @table.stage == "standby"  %>
+      FLOP (HIDDEN)
+      <% else %>
+      <img src="<%= @deck.where(:card => @table.flop2).first.image_url %>"
+      style="width:80px;height:100px;">
+      <% end %>
+    </td>
+    <td><% if @table.stage == "deal_cards" || @table.stage == "blinds" || @table.stage == "standby"  %>
+      FLOP (HIDDEN)
+      <% else %>
+      <img src="<%= @deck.where(:card => @table.flop3).first.image_url %>"
+      style="width:80px;height:100px;">
+      <% end %>
+    </td>
+    <td><% if @table.stage == "river" || @table.stage == "turn" %>
+      <img src="<%= @deck.where(:card => @table.river).first.image_url %>"
+      style="width:80px;height:100px;">
+      <% else %>
+      RIVER (HIDDEN)
+      <% end %>
+    </td>
+    <td><% if @table.stage == "turn" %>
+      <img src="<%= @deck.where(:card => @table.turn).first.image_url %>"
+      style="width:80px;height:100px;">
+      <% else %>
+      TURN (HIDDEN)
+      <% end %>
+    </td>
+  </tr>
+</table>
+
+<!-- list where players and current status are displayed -->
+<h4><p class="text-center">Pot: <%= @table.pot %></p></h4>
+<div>
   <ul class="list-group">
 
     <% @player.each do |player| %>
@@ -150,68 +151,72 @@
     </li>
     <% end %>
     <% end %>
-  </li>
+  </ul>
+</div>
+<!-- player stats -->
 
-  <!-- player stats -->
-
-  <div class="col-md-2">
-    <table class="table table-bordered">
-      <tr>
-        <% if @this_player != "visitor" %>
-        <th>My cards</th>
-        <% end %>
-        <th>Purses</th>
-        <th>Buy-ins</th>
-      </tr>
-      <tr>
-        <% if @this_player != "visitor" %>
-        <td>
-          <img src="<%= @deck.find_by(:card => @player.find_by(:player_number => @this_player).c1).image_url %>"
-          style="width:80px;height:100px;">
-          <img src="<%= @deck.find_by(:card => @player.find_by(:player_number => @this_player).c2).image_url %>"
-          style="width:80px;height:100px;">
-        </td>
-        <% end %>
-        <td>
-          <ol>
-            <% @player.each do |player| %>
-            <li><%= player.purse %></li>
-            <% end %>
-          </ol>
-        </td>
-
-        <td>
-          <ul>
-            <% @player.each do |player| %>
-            <li><%= player.buy_ins %></li>
-            <% end %>
-          </ul>
-        </td>
-
-      </tr>
+<div class="col-md-2">
+  <table class="table table-bordered">
+    <tr>
       <% if @this_player != "visitor" %>
-
-      <tr>
-        <td></td>
-        <td>
-          <form action="/buy_in_less/<%= @table_id %>" method="post">
-            <button class="btn btn-success">
-              Decrease buy-in
-            </button>
-          </form>
-        </td>
-
-        <td>
-          <form action="/buy_in_more/<%= @table_id %>" method ="post">
-            <button class="btn btn-danger">
-              Increase buy-in
-            </button>
-          </form>
-        </td>
-      </tr>
+      <th>My cards</th>
       <% end %>
-    </table>
-  </div>
+      <th>Purses</th>
+      <th>Buy-ins</th>
+    </tr>
+    <tr>
+      <% if @this_player != "visitor"%>
+      <td>
+        <% if @table.stage != "standby" && (@player.find_by(:player_number => @this_player).c1 != nil && @player.find_by(:player_number => @this_player).c2 != nil) %>
+        <img src="<%= @deck.find_by(:card => @player.find_by(:player_number => @this_player).c1).image_url %>"
+        style="width:80px;height:100px;">
+        <img src="<%= @deck.find_by(:card => @player.find_by(:player_number => @this_player).c2).image_url %>"
+        style="width:80px;height:100px;">
+        <% else %>
+        No cards to show yet. Please wait for game to start.
+        <% end %>
+      </td>
+      <% end %>
+      <td>
+        <ol>
+          <% @player.each do |player| %>
+          <li><%= player.purse %></li>
+          <% end %>
+        </ol>
+      </td>
+
+      <td>
+        <ul>
+          <% @player.each do |player| %>
+          <li><%= player.buy_ins %></li>
+          <% end %>
+        </ul>
+      </td>
+
+    </tr>
+    <% if @this_player != "visitor" %>
+
+    <tr>
+      <td></td>
+      <td>
+        <form action="/buy_in_less/<%= @table_id %>" method="post">
+          <button class="btn btn-success">
+            Decrease buy-in
+          </button>
+        </form>
+      </td>
+
+      <td>
+        <form action="/buy_in_more/<%= @table_id %>" method ="post">
+          <button class="btn btn-danger">
+            Increase buy-in
+          </button>
+        </form>
+      </td>
+    </tr>
+    <% end %>
+  </table>
+</div>
 
 </body>
 </html>

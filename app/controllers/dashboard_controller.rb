@@ -22,6 +22,7 @@ class DashboardController < ApplicationController
     @table.stage = "standby"
     @table.small_blind = params[:big_blind].to_i/2
     @table.big_blind = params[:big_blind]
+    @table.button_holder = 1
     @table.buy_in = params[:buy_in]
     @table.pot = 0
     @table.save
@@ -30,8 +31,8 @@ class DashboardController < ApplicationController
     @tp.user_id = current_user.id
     @tp.player_number = 1            #adjust this
     @tp.folded = true
-    @tp.buy_ins = 0
-    @tp.purse = 0
+    @tp.buy_ins = 1
+    @tp.purse = @table.buy_in
     @tp.latest_bet_this_round = 0
     @tp.save
 
@@ -53,12 +54,13 @@ class DashboardController < ApplicationController
   def join_table
     @player = Player.new
     if Table.find_by(:id => params[:id], :password => params[:password]) != nil
+      @table = Table.find_by(:id => params[:id], :password => params[:password])
       @player.table_id = params[:id]
       @player.user_id = current_user.id
       @player.player_number = Table.find(params[:id]).players.length + 1
       @player.folded = true
-      @player.buy_ins = 0
-      @player.purse = 0
+      @player.buy_ins = 1
+      @player.purse = @table.buy_in
       @player.latest_bet_this_round = 0
       @player.save
 

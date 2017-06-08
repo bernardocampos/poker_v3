@@ -2,7 +2,12 @@ class GameplayController < ApplicationController
   def game
     load_variables
     players_not_folded
-    if @table.stage == "deal_cards"
+    if @table.stage == "standby"
+      if @player.count > 1
+        finalize_round
+      end
+      render("gameplay.html.erb")
+    elsif @table.stage == "deal_cards"
       deal_cards
       finalize_stage
       ## next_stage
@@ -68,7 +73,7 @@ class GameplayController < ApplicationController
 
     a = 5
     b = 1
-    until a == z+5 do  #i thought this should've been until a==11, but it only worked with 12
+    until a == z+5 do
       temp_player = Player.find_by(:table_id => @table_id, :player_number => b)
 
       temp_player.c1 = Deck.find(deck_shuffle[a]).card
