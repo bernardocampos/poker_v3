@@ -6,9 +6,8 @@ class ManagementController < ApplicationController
   end
 
   def deck
-    @deck = Deck.all
-    @table = Table.find(params[:table_id])
-
+    @deck = Deck.first
+    render("deck.html.erb")
   end
 
 end

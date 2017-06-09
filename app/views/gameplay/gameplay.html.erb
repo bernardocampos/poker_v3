@@ -173,7 +173,7 @@
         <img src="<%= @deck.find_by(:card => @player.find_by(:player_number => @this_player).c2).image_url %>"
         style="width:80px;height:100px;">
         <% else %>
-        No cards to show yet. Please wait for game to start.
+        No cards to show yet. Please wait for the next round to start.
         <% end %>
       </td>
       <% end %>

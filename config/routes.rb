@@ -24,7 +24,7 @@ Rails.application.routes.draw do
 
   #management controller actions
   get("/stats/:table_id", {:controller => "management", :action => "stats"})
-  get("/deck/:table_id", {:controller => "management", :action => "deck"})
+  get("/deck/", {:controller => "management", :action => "deck"})
 
 
 end
