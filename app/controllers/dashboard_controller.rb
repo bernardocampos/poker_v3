@@ -25,7 +25,7 @@ class DashboardController < ApplicationController
     @table.button_holder = 1
     @table.buy_in = params[:buy_in]
     @table.pot = 0
-    @table.winning_hands = ["nothing yet"]
+    @table.winning_hands = [nil]
     @table.save
     @tp = Player.new
     @tp.table_id = @table.id
@@ -120,6 +120,7 @@ class DashboardController < ApplicationController
       @table.stage = "deal_cards"
       @table.min_bet = @table.small_blind
       @table.button_holder = @table.players.count
+      @table.winning_hands = [nil]
       @table.active_player = 1 ##########
       @table.save
 

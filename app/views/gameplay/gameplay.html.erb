@@ -145,7 +145,7 @@
           <input type="hidden" name="user_id" value="<%= player.user_id %>">
           <input type="hidden" name="table_id" value="<%= player.table_id %>">
 
-          <input type="submit" value="Confirm">
+          <button type="submit" class="btn btn-primary btn-sm">Submit</button>
         </p>
       </form>
     </li>
@@ -156,7 +156,7 @@
 <!-- player stats -->
 
 <div class="col-md-2">
-  <table class="table table-bordered">
+  <table class="table table-bordered" style="width: 100%;">
     <tr>
       <% if @this_player != "visitor" %>
       <th>My cards</th>
@@ -196,31 +196,31 @@
           <% end %>
         </ul>
       </td>
-
     </tr>
     <% if @this_player != "visitor" %>
-
     <tr>
       <td></td>
       <td>
         <form action="/buy_in_less/<%= @table_id %>" method="post">
-          <button class="btn btn-success">
-            Decrease buy-in
+          <button class="btn btn-success btn-sm">
+            Buy in <i class="fa fa-chevron-down" aria-hidden="true"></i>
           </button>
         </form>
       </td>
-
       <td>
         <form action="/buy_in_more/<%= @table_id %>" method ="post">
-          <button class="btn btn-danger">
-            Increase buy-in
+          <button class="btn btn-danger btn-sm">
+            Buy in <i class="fa fa-chevron-up" aria-hidden="true"></i>
           </button>
         </form>
       </td>
     </tr>
     <% end %>
   </table>
-</div>
+
+
+
+
 
 </body>
 </html>
