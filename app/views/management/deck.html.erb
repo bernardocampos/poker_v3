@@ -6,9 +6,16 @@
 
 <body>
   <table class="table table-bordered">
+    <tr>
+      <th>ID</th>
+      <th>Card</th>
+      <th>Image</th>
+      <th>Image URL</th>
+    </tr>
 
     <% @deck.each do |deck| %>
     <tr>
+      <td><%= deck.id %></td>
       <td><%= deck.card %></td>
       <td><img src="<%= deck.image_url %>" style="width:80px;height:100px;"></td>
       <td>
