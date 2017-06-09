@@ -5,13 +5,15 @@ class GameplayController < ApplicationController
     if @table.stage == "standby"
       if @player.count > 1
         finalize_round
+        redirect_to("/#{@table_id}", :notice => "#{@notices}")
+      else
+        render("gameplay.html.erb")
       end
-      render("gameplay.html.erb")
     elsif @table.stage == "deal_cards"
       deal_cards
       finalize_stage
       ## next_stage
-      render("gameplay.html.erb")
+      redirect_to("/#{@table_id}", :notice => "#{@notices}")
     elsif @table.stage == "pay_winner" #or everyone folded
       pay_winner
       finalize_round
@@ -22,11 +24,15 @@ class GameplayController < ApplicationController
       @notices
       render("gameplay.html.erb")
     elsif players_not_folded.length == 1
-      pay_winner
-      finalize_round
-      winner_notices
-      redirect_to("/#{@table_id}", :notice => "#{@notices}")
-      # redirect_to("/#{@user_id}/#{@table_id}", :notice => "#{players_not_folded} wins #{@table.pot}")
+      # pay_winner
+      # finalize_round
+      # winner_notices
+      # redirect_to("/#{@table_id}", :notice => "#{@notices}")
+      temp_table = @table
+      temp_table.stage = "pay_winner"
+      temp_table.save
+      # render("gameplay.html.erb")
+      redirect_to("/#{@table_id}")
     else
       render("gameplay.html.erb")
     end
@@ -44,7 +50,7 @@ class GameplayController < ApplicationController
   def buy_in_less
     load_variables
     tp = @player.find_by(:user_id => @user_id)
-    if tp.purse > @table.buy_in
+    if tp.purse >= @table.buy_in
       tp.buy_ins = tp.buy_ins-1
       tp.purse = tp.purse - @table.buy_in
       tp.save
@@ -67,14 +73,15 @@ class GameplayController < ApplicationController
 
   def deal_cards
     load_variables
+    players_not_folded
     # place two cards in each players' hands + flop, river and turn
-    z = @table.players.count.to_i * 2
+    z = players_not_folded.count * 2
     deck_shuffle = ((Deck.first.id)..(Deck.last.id)).to_a.sample(z+5)
 
     a = 5
-    b = 1
+    b = 0
     until a == z+5 do
-      temp_player = Player.find_by(:table_id => @table_id, :player_number => b)
+      temp_player = Player.find_by(:table_id => @table_id, :player_number => players_not_folded[b])
 
       temp_player.c1 = Deck.find(deck_shuffle[a]).card
       a = a+1
@@ -109,10 +116,16 @@ class GameplayController < ApplicationController
   end
 
   def finalize_round
+    load_variables
+
     @player = Player.where(:table_id => params[:table_id])
     @player.each do |player|
       tp = player
-      tp.folded = false
+      if tp.purse > 0
+        tp.folded = false
+      else
+        tp.folded = true
+      end
       tp.latest_bet_this_round = 0
       tp.save
     end
@@ -121,26 +134,29 @@ class GameplayController < ApplicationController
     @table.pot = 0
     @table.min_bet = @table.small_blind
     @table.stage = "deal_cards"
+    @table.save                               ## FOR SOME REASON IT WASN'T WORKING WITHOUT THIS
 
-    @table.button_holder =
-    if @table.button_holder == @player.count
-      @table.button_holder = 1
+    pnf = players_not_folded                  ## FOR SOME REASON IT WASN'T WORKING WITHOUT THIS (besides the obvious)
+
+    #find where button holder is in the array of non-folded players
+    button_holder_index = pnf.index(@table.button_holder)
+
+    # update button holder
+    @table = Table.find(params[:table_id])    ## FOR SOME REASON IT WASN'T WORKING WITHOUT THIS
+    if @table.button_holder == pnf.last
+      @table.button_holder = pnf[0]
     else
-      @table.button_holder = @table.button_holder + 1
+      @table.button_holder = pnf[button_holder_index+1]
     end
 
-    carousel = []
-    a=1
-    until carousel.length == @player.count * 2 do
-      carousel.push(a)
-      if a == @player.count
-        a = 1
-      else
-        a = a + 1
-      end
+    # update first active player for next round
+    carousel = pnf
+    carousel = carousel.concat(carousel)
+    if carousel.index(@table.button_holder) == nil
+      @table.active_player = carousel[0]
+    else
+      @table.active_player = carousel[carousel.index(@table.button_holder)+1]
     end
-
-    @table.active_player = carousel[carousel.index(@table.button_holder)+1]
 
     @table.save
   end
@@ -252,6 +268,7 @@ class GameplayController < ApplicationController
       winners = []
       winners.push(players_not_folded[hands.index(hands.sort.reverse[0])])
 
+      #allows for more than one winner if there is a tie
       x = 1
       until x == players_not_folded.length-1
         if hands.sort.reverse[0] == hands.sort.reverse[x]
@@ -360,9 +377,11 @@ class GameplayController < ApplicationController
     load_variables
     notices=[]
     a = 0
-    if @table.winning_hands.length == 0
+    if @table.winning_hands == ["nothing yet"]
       # notices.push("#{@player.find_by(:player_number => @table.winners[a]).user.username} didn't give up and won #{@table.winnings[a]} for their courage")
-      notices.push("One of two things happened: everyone but one player folded, or you just started this table.")
+      notices.push("Enjoy the game!")
+    elsif @table.winning_hands == []
+      notices.push("Last round's winner: #{@player.find_by(:player_number => @table.winners[a]).user.username} was the lone survivor and won #{@table.winnings[a]}")
     else
       until a > @table.winners.length-1 do
         notices.push("Last round's winners: #{@player.find_by(:player_number => @table.winners[a]).user.username} wins #{@table.winnings[a]} with #{@table.winning_hands[a].rank}")

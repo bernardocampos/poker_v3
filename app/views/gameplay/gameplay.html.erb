@@ -173,7 +173,11 @@
         <img src="<%= @deck.find_by(:card => @player.find_by(:player_number => @this_player).c2).image_url %>"
         style="width:80px;height:100px;">
         <% else %>
+        <% if @player.find_by(:table_id => @table.id, :user_id => current_user.id).purse == 0 %>
+        You're too broke for cards. Buy in if you want to play.
+        <% else %>
         No cards to show yet. Please wait for the next round to start.
+        <% end %>
         <% end %>
       </td>
       <% end %>

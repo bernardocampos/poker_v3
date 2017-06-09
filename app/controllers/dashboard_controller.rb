@@ -25,6 +25,7 @@ class DashboardController < ApplicationController
     @table.button_holder = 1
     @table.buy_in = params[:buy_in]
     @table.pot = 0
+    @table.winning_hands = ["nothing yet"]
     @table.save
     @tp = Player.new
     @tp.table_id = @table.id
@@ -57,7 +58,7 @@ class DashboardController < ApplicationController
       @table = Table.find_by(:id => params[:id], :password => params[:password])
       @player.table_id = params[:id]
       @player.user_id = current_user.id
-      @player.player_number = Table.find(params[:id]).players.length + 1
+      @player.player_number = @table.players.count + 1
       @player.folded = true
       @player.buy_ins = 1
       @player.purse = @table.buy_in
