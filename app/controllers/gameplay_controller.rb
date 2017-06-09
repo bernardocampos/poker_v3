@@ -69,7 +69,7 @@ class GameplayController < ApplicationController
     load_variables
     # place two cards in each players' hands + flop, river and turn
     z = @table.players.count.to_i * 2
-    deck_shuffle = (1..52).to_a.sample(z+5)
+    deck_shuffle = ((Deck.first.id)..(Deck.last.id)).to_a.sample(z+5)
 
     a = 5
     b = 1
