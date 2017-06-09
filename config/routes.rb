@@ -15,9 +15,9 @@ Rails.application.routes.draw do
   root to: "dashboard#home"
 
   #management controller actions
-  get("/stats/:table_id", {:controller => "management", :action => "stats"})
-  get("/deck/", {:controller => "management", :action => "deck"})
-  post("/update_deck/", {:controller => "management", :action => "update_deck"})
+  # get("/stats/:table_id", {:controller => "management", :action => "stats"})
+  # get("/deck/", {:controller => "management", :action => "deck"})
+  # post("/update_deck/", {:controller => "management", :action => "update_deck"})
 
   #gameplay controller actions
 
