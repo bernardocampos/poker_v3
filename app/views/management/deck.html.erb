@@ -1,16 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
+
 </head>
 
 <body>
   <table class="table table-bordered">
 
-    <% @deck.each do |card| %>
+    <% @deck.each do |deck| %>
     <tr>
-      <td><%= card.card %></td>
-      <td><img src="<%= card.image_url %>"></td>
+      <td><%= deck.card %></td>
+      <td><img src="<%= deck.image_url %>" style="width:80px;height:100px;"></td>
+      <td>
+        <div class="form-group">
+        <form action="/update_deck" method="post">
+          <input type="hidden" value="<%= deck.card %>", name="card">
+          <input type="text" value="<%= deck.image_url %>", name="image_url" class="form-control">
+          <button>Update</button>
+        </form>
+      </div>
+      </td>
     </tr>
     <% end %>
   </table>

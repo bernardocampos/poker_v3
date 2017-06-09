@@ -26,7 +26,7 @@ url_array = [
 "https://upload.wikimedia.org/wikipedia/commons/4/4b/Playing_card_club_7.svg",
 "https://upload.wikimedia.org/wikipedia/commons/e/eb/Playing_card_club_8.svg",
 "https://upload.wikimedia.org/wikipedia/commons/2/27/Playing_card_club_9.svg",
-"https://upload.wikimedia.org/wikipedia/commons/3/3e/Playing_card_club_10.sv",
+"https://upload.wikimedia.org/wikipedia/commons/3/3e/Playing_card_club_10.svg",
 "https://upload.wikimedia.org/wikipedia/commons/b/b7/Playing_card_club_J.svg",
 "https://upload.wikimedia.org/wikipedia/commons/f/f2/Playing_card_club_Q.svg",
 "https://upload.wikimedia.org/wikipedia/commons/2/22/Playing_card_club_K.svg",

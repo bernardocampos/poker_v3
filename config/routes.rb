@@ -14,6 +14,11 @@ Rails.application.routes.draw do
 
   root to: "dashboard#home"
 
+  #management controller actions
+  get("/stats/:table_id", {:controller => "management", :action => "stats"})
+  get("/deck/", {:controller => "management", :action => "deck"})
+  post("/update_deck/", {:controller => "management", :action => "update_deck"})
+
   #gameplay controller actions
 
   get("/:table_id", {:controller => "gameplay", :action => "game"})
@@ -21,10 +26,5 @@ Rails.application.routes.draw do
   get("/to_turn/:user_id/:table_id", {:controller => "gameplay", :action => "to_turn"})
   post("/buy_in_more/:table_id", {:controller => "gameplay", :action => "buy_in_more"})
   post("/buy_in_less/:table_id", {:controller => "gameplay", :action => "buy_in_less"})
-
-  #management controller actions
-  get("/stats/:table_id", {:controller => "management", :action => "stats"})
-  get("/deck/", {:controller => "management", :action => "deck"})
-
 
 end

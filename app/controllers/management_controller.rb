@@ -6,8 +6,16 @@ class ManagementController < ApplicationController
   end
 
   def deck
-    @deck = Deck.first
+    @deck = Deck.all
     render("deck.html.erb")
+  end
+
+  def update_deck
+    tc = Deck.find_by(:card => params[:card])
+    tc.card = params[:card]
+    tc.image_url = params[:image_url]
+    tc.save
+    redirect_to("/deck", :notice => "image updated successfully")
   end
 
 end
