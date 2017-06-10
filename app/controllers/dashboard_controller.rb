@@ -139,4 +139,10 @@ class DashboardController < ApplicationController
     end
   end
 
+  def leaderboard
+    @round = Round.all
+    relevant_players = @round.uniq.pluck(:user_id)
+    @user = User.where(id: relevant_players)
+
+  end
 end

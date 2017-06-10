@@ -117,7 +117,7 @@ class GameplayController < ApplicationController
 
   def finalize_round
     load_variables
-
+    record_to_leaderboard
     @player = Player.where(:table_id => params[:table_id])
     @player.each do |player|
       tp = player
@@ -348,6 +348,40 @@ class GameplayController < ApplicationController
       temp_table.save
 
       redirect_to("/#{@table_id}")
+
+    end
+  end
+
+  def record_to_leaderboard
+    load_variables
+    pnf = players_not_folded
+
+    table_cards = [@table.flop1, @table.flop2, @table.flop3, @table.river, @table.turn]
+    @player.each do |player|
+      if @player.find_by(:player_number => player.player_number).c1 != nil
+        tr = Round.new
+        tr.user_id = player.user.id
+        tr.table_id = @table.id
+        tr.folded = player.folded
+        hole_cards =
+        [@player.find_by(:player_number => player.player_number).c1, @player.find_by(:player_number => player.player_number).c2]
+        hand = PokerHand.new(hole_cards.concat table_cards)
+        tr.cards = hand.score
+        tr.hand = hand.rank
+
+        if @table.winners.index(player.player_number) != nil
+          tr.won = true
+        else
+          tr.won = false
+        end
+
+        if @table.winners.index(player.player_number) != nil && @table.winners.count == 1
+          tr.lone_survivor = true
+        else
+          tr.lone_survivor = false
+        end
+        tr.save
+      end
 
     end
   end

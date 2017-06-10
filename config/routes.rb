@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   get("/leave_confirmation/:table_id", {:controller => "dashboard", :action => "leave_confirmation"})
   post("/reset_table/", {:controller => "dashboard", :action => "reset_table"})
   get("/reset_confirmation/:table_id", {:controller => "dashboard", :action => "reset_confirmation"})
+  get("/leaderboard", {:controller => "dashboard", :action => "leaderboard"})
 
   root to: "dashboard#home"
 

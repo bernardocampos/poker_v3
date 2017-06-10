@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  table_id: 1
+  folded: false
+  cards: MyString
+  hand: MyString
+  won: false
+  lone_survivor: false
+
+two:
+  user_id: 1
+  table_id: 1
+  folded: false
+  cards: MyString
+  hand: MyString
+  won: false
+  lone_survivor: false
