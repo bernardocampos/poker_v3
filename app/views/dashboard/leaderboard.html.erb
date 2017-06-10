@@ -22,9 +22,9 @@
       <td><%= user.created_at %></td>
       <td><%= Round.where(:user_id => user.id).count %></td>
       <td><%= Player.where(:user_id => user.id).count %></td>
-      <td><%= number_to_percentage(Round.where(:user_id => user.id, :won => true).count / Round.where(:user_id => user.id).count * 100, precision: 0) %></td>
-      <td><%= number_to_percentage(Round.where(:user_id => user.id, :folded => true).count / Round.where(:user_id => user.id).count * 100, precision: 0)%></td>
-      <td><%= number_to_percentage(Round.where(:user_id => user.id, :lone_survivor => true).count / Round.where(:user_id => user.id).count * 100, precision: 0)%></td>
+      <td><%= number_to_percentage(Round.where(:user_id => user.id, :won => true).count.to_f / Round.where(:user_id => user.id).count.to_f * 100, precision: 0) %></td>
+      <td><%= number_to_percentage(Round.where(:user_id => user.id, :folded => true).count.to_f / Round.where(:user_id => user.id).count.to_f * 100, precision: 0) %></td>
+      <td><%= number_to_percentage(Round.where(:user_id => user.id, :lone_survivor => true).count.to_f / Round.where(:user_id => user.id).count.to_f * 100, precision: 0) %></td>
     </tr>
   <% end %>
   </table>
