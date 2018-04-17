@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   post("/reset_table/", {:controller => "dashboard", :action => "reset_table"})
   get("/reset_confirmation/:table_id", {:controller => "dashboard", :action => "reset_confirmation"})
   get("/leaderboard", {:controller => "dashboard", :action => "leaderboard"})
+  get("/invite", {:controller => "dashboard", :action => "invite"})
 
   root to: "dashboard#home"
 

@@ -78,6 +78,10 @@ class DashboardController < ApplicationController
     end
 
   end
+  
+  def invite
+    render("dashboard/invite.html.erb")
+  end
 
   def add_user
     #code
