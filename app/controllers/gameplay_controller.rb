@@ -1,4 +1,7 @@
 class GameplayController < ApplicationController
+  
+  #next_player is the most complex logic here. It still looks not 100% right, and will need to be updated when raising is implemented
+  
   def game
     load_variables
     players_not_folded
@@ -21,7 +24,6 @@ class GameplayController < ApplicationController
       redirect_to("/#{@table_id}", :notice => "#{@notices}")
     elsif @table.stage == "blinds"
       winner_notices
-      @notices
       render("gameplay.html.erb")
     elsif players_not_folded.length == 1
       # pay_winner
@@ -121,7 +123,7 @@ class GameplayController < ApplicationController
     @player = Player.where(:table_id => params[:table_id])
     @player.each do |player|
       tp = player
-      if tp.purse > 0
+      if tp.purse > @table.big_blind
         tp.folded = false
       else
         tp.folded = true
@@ -149,11 +151,11 @@ class GameplayController < ApplicationController
       @table.button_holder = pnf[button_holder_index+1]
     end
 
-    # update first active player for next round
+    # update first active player for next round 
     carousel = pnf
     carousel = carousel.concat(carousel)
     if carousel.index(@table.button_holder) == nil
-      @table.active_player = carousel[0]
+      @table.active_player = carousel[0] #THIS LOOKS WRONG. if last button holder is out, new bh needs to be to his right
     else
       @table.active_player = carousel[carousel.index(@table.button_holder)+1]
     end
@@ -196,33 +198,72 @@ class GameplayController < ApplicationController
   end
 
   def next_player
-    load_variables
-    players_not_folded
+  load_variables
+  players_not_done
+  players_not_folded
+  pnd = players_not_done
+  pnf = players_not_folded
+  
+   #find where active player is in the array or non-folded and not-done players
+  
+  if pnd.length == 0
 
-    #find where active player is in the array
-    active_player_index = players_not_folded.index(@table.active_player)
+    if pnf.max > @table.button_holder 
+      active_player = pnf.select{|x| x > @table.button_holder}.min
+    else
+      active_player = pnf.min
+    end
+      temp_table = Table.find(params[:table_id])
+      temp_table.active_player = active_player
+      temp_table.save
+  
+      finalize_stage
+
+  else 
+    if pnd.max > @table.active_player
+    next_player_index = pnd.index(pnd.select{|x| x > @table.active_player}.min)
+    else
+    next_player_index = 0
+    end
+    active_player = pnd[next_player_index]
+  end
+  
+  temp_table = Table.find(params[:table_id])
+  temp_table.active_player = active_player
+  temp_table.save
+  
+  end
+
+
+  # def next_player
+  #   load_variables
+  #   players_not_folded
+  #   players_not_done
+
+  #   #find where active player is in the array or non-folded players
+  #   active_player_index = players_not_folded.index(@table.active_player)
 
     #update active player
 
-    if
-      if players_not_folded.select{|x|x <= @table.button_holder}.count>0 #if there are active players <= button player
-        @table.active_player == players_not_folded.select{|x|x <= @table.button_holder}.max #does active player equal greatest non-folded player <= button player?
-      else @table.active_player == players_not_folded.max #does active player equal greatest non-folded player?
-      end
-      #this logic needs to be updated later. if someone raises this doesn;t apply
-      ############################this is where a large chunk of the logic goes, perhaps in a separate action
-      finalize_stage
-    else
-      temp_table = Table.find(params[:table_id])
-      temp_table.active_player =
-      if @table.active_player == players_not_folded.max
-        players_not_folded[0]
-      else players_not_folded[active_player_index+1]
-      end
-      temp_table.save
-    end
+    # if
+    #   if players_not_folded.select{|x| x <= @table.button_holder}.count>0 #if there are non-folded players <= button holders
+    #     @table.active_player == players_not_folded.select{|x| x <= @table.button_holder}.max #does active player equal greatest non-folded player <= button player?
+    #   else @table.active_player == players_not_folded.max #does active player equal greatest non-folded player?
+    #   end #the above line seems wrong. 
+    #   #this logic needs to be updated later. if someone raises this doesn;t apply
+    #   ############################this is where a large chunk of the logic goes, perhaps in a separate action
+    #   finalize_stage
+    # else
+    #   temp_table = Table.find(params[:table_id])
+    #   temp_table.active_player =
+    #   if @table.active_player == players_not_folded.max
+    #     players_not_folded[0]
+    #   else players_not_folded[active_player_index+1]
+    #   end
+    #   temp_table.save
+    # end
 
-  end
+  # end
 
   def next_stage
     #### "go to next game stage" command
@@ -274,7 +315,7 @@ class GameplayController < ApplicationController
         if hands.sort.reverse[0] == hands.sort.reverse[x]
           winners.push(players_not_folded[hands.index(hands.sort.reverse[x])])
         end
-        x = x +1
+        x = x+1
       end
 
       winnings = []
@@ -301,6 +342,37 @@ class GameplayController < ApplicationController
 
   end
 
+  # def player_moves
+  #   load_variables
+  #   player_moves = []
+    
+  #   x = @player.count
+  #   y = 1
+  #   until player_moves.count == x do
+  #     players_moves.push(@player.find(y).latest_move)
+  #     y = y+1
+  #   end
+  #   player_moves
+  # end
+
+  def players_not_done
+  load_variables
+  # player_moves
+  all_bets_this_round = []
+  @player.each do |player|
+    all_bets_this_round.push(player.latest_bet_this_round)
+  end
+  
+  players_not_done = []
+  @player.each do |player|
+    if player.folded == false && (player.latest_bet_this_round < all_bets_this_round.max || player.latest_bet_this_round == nil)
+      players_not_done.push(player.player_number)
+    end
+  end
+  
+  players_not_done
+  end
+
   def players_not_folded
     #create array of players still in game
     load_variables
@@ -316,7 +388,7 @@ class GameplayController < ApplicationController
 
   def record_move
     load_variables
-    max_bet = [@table.min_bet,@table.pot].max
+    max_bet = [@table.min_bet*2,@table.pot].max
 
     if params[:move] == "bet" && (params[:bet_amount].to_i > max_bet || params[:bet_amount].to_i < @table.min_bet)
       redirect_to("/#{@table_id}", :alert => "Bet must be between #{@table.min_bet} and #{max_bet}. You can also fold or check (if available)")
@@ -341,11 +413,13 @@ class GameplayController < ApplicationController
       temp_table.pot = temp_table.pot + temp_player.latest_bet_this_round
       temp_table.min_bet  = [params[:bet_amount].to_i, @table.small_blind].max
 
-      next_player # this has to be in a specific place such that downstream commands will work (which
+      # next_player # this has to be in a specific place such that downstream commands will work (which
       #requires current player to not fold yet)
 
       temp_player.save
       temp_table.save
+
+      next_player
 
       redirect_to("/#{@table_id}")
 

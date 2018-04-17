@@ -153,15 +153,16 @@
     <% end %>
   </ul>
 </div>
+<!-- player stats -->
 
-<!-- my cards -->
-<% if @this_player != "visitor" %>
 <div class="col-md-4">
-  <table class="table table-striped" style="width: 100%;">
+  <table class="table table-bordered" style="width: 100%;">
     <tr>
-      
+      <% if @this_player != "visitor" %>
       <th>My cards</th>
-      
+      <% end %>
+      <th>Money held</th>
+      <th>Buy-ins</th>
     </tr>
     <tr>
       <% if @this_player != "visitor"%>
@@ -180,39 +181,16 @@
         <% end %>
       </td>
       <% end %>
-      
-    </tr>
-  
-  </table>
-  </div>
-<% end %>
-<!-- player stats -->
-
-<div class="col-md-4">
-  <table class="table table-striped" style="width: 100%;">
-    <tr>
-      <th>Player</th>
-      <th>Money held</th>
-      <th>Buy-ins</th>
-    </tr>
-    <tr>
       <td>
-        <ul class="list-unstyled">
+        <ul>
           <% @player.each do |player| %>
-          <li><%= player.user.username %></li>
-          <% end %>
-        </ul>
-      </td>
-      <td>
-        <ul class="list-unstyled">
-          <% @player.each do |player| %>
-          <li><%= player.purse %></li>
+          <li><%= player.user.username %>: <%= player.purse %></li>
           <% end %>
         </ul>
       </td>
 
       <td>
-        <ul class="list-unstyled">
+        <ul>
           <% @player.each do |player| %>
           <li><%= player.buy_ins %></li>
           <% end %>
@@ -221,6 +199,7 @@
     </tr>
     <% if @this_player != "visitor" %>
     <tr>
+      <td></td>
       <td>
         <form action="/buy_in_less/<%= @table_id %>" method="post">
           <button class="btn btn-success btn-sm">
@@ -228,7 +207,6 @@
           </button>
         </form>
       </td>
-      <td></td>
       <td>
         <form action="/buy_in_more/<%= @table_id %>" method ="post">
           <button class="btn btn-danger btn-sm">
@@ -239,7 +217,6 @@
     </tr>
     <% end %>
   </table>
-  </div>
 
 
 
