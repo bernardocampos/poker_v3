@@ -175,6 +175,7 @@ class GameplayController < ApplicationController
     else players_not_folded.min
     end
 
+    temp_table.min_bet = @table.small_blind
     temp_table.save
 
     clear_bets
