@@ -68,7 +68,7 @@ class GameplayController < ApplicationController
     load_variables
     @player.each do |player|
       temp_player = player
-      temp_player.latest_bet_this_round = 0
+      temp_player.latest_bet_this_round = nil
       temp_player.save
     end
   end
@@ -128,7 +128,7 @@ class GameplayController < ApplicationController
       else
         tp.folded = true
       end
-      tp.latest_bet_this_round = 0
+      tp.latest_bet_this_round = nil
       tp.save
     end
 
@@ -361,12 +361,12 @@ class GameplayController < ApplicationController
   # player_moves
   all_bets_this_round = []
   @player.each do |player|
-    all_bets_this_round.push(player.latest_bet_this_round)
+    all_bets_this_round.push(player.latest_bet_this_round.to_i)
   end
   
   players_not_done = []
   @player.each do |player|
-    if player.folded == false && (player.latest_bet_this_round < all_bets_this_round.max || player.latest_bet_this_round == nil)
+    if player.folded == false && (player.latest_bet_this_round.to_i < all_bets_this_round.max || player.latest_bet_this_round == nil)
       players_not_done.push(player.player_number)
     end
   end
@@ -412,7 +412,7 @@ class GameplayController < ApplicationController
 
       temp_table = Table.find_by(:id => @table_id)
       temp_table.pot = temp_table.pot + temp_player.latest_bet_this_round
-      temp_table.min_bet  = [params[:bet_amount].to_i, @table.small_blind].max
+      temp_table.min_bet  = [temp_player.latest_bet_this_round, @table.small_blind].max
 
       # next_player # this has to be in a specific place such that downstream commands will work (which
       #requires current player to not fold yet)

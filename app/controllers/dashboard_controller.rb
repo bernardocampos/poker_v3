@@ -34,7 +34,7 @@ class DashboardController < ApplicationController
     @tp.folded = true
     @tp.buy_ins = 1
     @tp.purse = @table.buy_in
-    @tp.latest_bet_this_round = 0
+    @tp.latest_bet_this_round = nil
     @tp.save
 
     save_status = @table.save
@@ -62,7 +62,7 @@ class DashboardController < ApplicationController
       @player.folded = true
       @player.buy_ins = 1
       @player.purse = @table.buy_in
-      @player.latest_bet_this_round = 0
+      @player.latest_bet_this_round = nil
       @player.save
 
       save_status = @player.save
@@ -133,7 +133,7 @@ class DashboardController < ApplicationController
         tp = player
         tp.purse = @table.buy_in
         tp.folded = false
-        tp.latest_bet_this_round = 0
+        tp.latest_bet_this_round = nil
         tp.buy_ins = 1
         tp.save
       end

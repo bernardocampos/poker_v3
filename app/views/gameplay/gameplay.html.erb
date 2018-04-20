@@ -129,12 +129,12 @@
         <input type="radio" name="move" value="bet" checked> Bet . . .
 
         <% if
-          @player.first(1).last.latest_bet_this_round +
-          @player.first(2).last.latest_bet_this_round +
-          @player.first(3).last.latest_bet_this_round +
-          @player.first(4).last.latest_bet_this_round +
-          @player.first(5).last.latest_bet_this_round +
-          @player.first(6).last.latest_bet_this_round == 0 %>
+          @player.first(1).last.latest_bet_this_round.to_i +
+          @player.first(2).last.latest_bet_this_round.to_i +
+          @player.first(3).last.latest_bet_this_round.to_i +
+          @player.first(4).last.latest_bet_this_round.to_i +
+          @player.first(5).last.latest_bet_this_round.to_i +
+          @player.first(6).last.latest_bet_this_round.to_i == 0 %>
 
           <input type="radio" name="move" value="check"> Check . . .
           <% end %>
